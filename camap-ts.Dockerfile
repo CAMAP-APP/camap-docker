@@ -1,4 +1,4 @@
-FROM node:20.11.1-bullseye-slim as builder
+FROM node:20.12.1-bullseye-slim as builder
 
 ENV FRONT_URL=https://api.camap.localdomain
 ENV FRONT_GRAPHQL_URL=${FRONT_URL}/graphql
@@ -30,7 +30,7 @@ RUN npm prune --production
 
 COPY --chown=interamap:interamap ./camap-ts/scripts/ /srv/scripts
 
-FROM  node:20.11.1-bullseye-slim
+FROM  node:20.12.1-bullseye-slim
 
 LABEL org.opencontainers.image.authors="InterAMAP44 inter@amap44.org"
 LABEL org.opencontainers.image.vendor="InterAMAP 44"
