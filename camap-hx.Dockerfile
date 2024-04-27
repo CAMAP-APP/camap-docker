@@ -1,4 +1,4 @@
-FROM node:20.3.1-bullseye-slim
+FROM node:20.12.1-bullseye-slim
 
 LABEL org.opencontainers.image.authors="InterAMAP44 inter@amap44.org"
 LABEL org.opencontainers.image.vendor="InterAMAP 44"

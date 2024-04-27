@@ -1,0 +1,112 @@
+version: "2"
+
+services:
+  
+  reverse-proxy:
+    # The official v2 Traefik docker image
+    image: traefik:v2.10
+    # Enables the web UI and tells Traefik to listen to docker
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--entrypoints.nest.adress=:3010"
+
+    ports:
+      - "80:80"
+      - "443:443"
+      - "3010:3010"
+      # The Web UI (enabled by --api.insecure=true)
+      - "8080:8080"
+    
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./traefik.yml:/traefik.yml
+      - ./traefik/config:/etc/traefik/config
+      - ./logs:/var/log/traefik
+      - ./ssl:/etc/traefik/config/ssl
+
+    labels:
+      # CROS error
+      - "traefik.http.middlewares.serviceheaders.headers.accesscontrolalloworiginlist=https://camap.localdomain,https://api.camap.localdomain"
+      - "traefik.http.middlewares.serviceheaders.headers.accesscontrolallowmethods=PUT,GET,POST,HEAD,PATCH,DELETE,OPTION"
+      - "traefik.http.middlewares.serviceheaders.headers.accesscontrolallowcredentials=true"
+      - "traefik.http.middlewares.serviceheaders.headers.accesscontrolallowheaders=x-cavea-url,authorization,x-requested-with,accept-api-version,content-type,cookie"
+      - "traefik.http.middlewares.serviceheaders.headers.accesscontrolmaxage=100"
+      - "traefik.http.middlewares.serviceheaders.headers.addvaryheader=true"
+      - "traefik.http.routers.service.middlewares=serviceheaders"
+  
+  loc-mysql:
+    build:
+      context: .
+      dockerfile: mysql.Dockerfile
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=db-camap
+      - MYSQL_USER=docker
+      - MYSQL_PASSWORD=docker
+    container_name: loc-mysql
+    ports:
+      - "3306:3306"
+    expose:
+      - 3306
+    volumes:
+      - database:/var/lib/mysql
+    #     - ./mysql/dumps/:/root/dumps
+    labels:
+      - "traefik.enable=false"
+
+  nest-loc-camap:
+    depends_on:
+      - loc-mysql
+    container_name: nest-loc-camap
+    build:
+      context: .
+      dockerfile: camap-ts.Dockerfile
+    env_file: camap-ts/.env
+    expose:
+      - 3010
+      - 6007
+    working_dir: /srv/packages/api-core
+    command: npm run start:dev
+    labels:
+      - "traefik.http.routers.nest-loc-camap.rule=Host(`api.camap.localdomain`)"
+      - "traefik.http.services.nest-loc-camap.loadbalancer.server.port=3010"
+      - "traefik.http.routers.nest-loc-camap.entrypoints=websecure"
+      - "traefik.http.routers.nest-loc-camap.tls=true"
+      - "traefik.http.routers.nest-loc-camap.middlewares=serviceheaders"
+      #- "traefik.http.routers.nest-loc-camap.tls.certresolver=le"
+      #- "traefik.http.routers.nest-loc-camap.tls.domains[0].main=localdomain"
+      #- "traefik.http.routers.nest-loc-camap.tls.domains[0].sans=*.localdomain"
+    volumes:
+      - ./camap-ts/public/neostatic:/srv/public/neostatic # mount ts front-end build in folder on image for developpement iterations
+      - ./camap-ts/.env.docker:/srv/.env # mount env configured for container inner use, because we modify .env for localhost use.
+      - ./camap-ts/packages/api-core/src:/srv/packages/api-core/src # src to watch
+
+  neko-loc-camap:
+    build:
+      context: .
+      dockerfile: camap-hx.Dockerfile
+    container_name: neko-loc-camap
+    expose:
+      - 80
+    depends_on:
+      - loc-mysql
+      - nest-loc-camap
+    labels:
+      - "traefik.http.routers.neko-loc-camap.rule=Host(`camap.localdomain`)"
+      - "traefik.http.services.neko-loc-camap.loadbalancer.server.port=80"
+      - "traefik.http.routers.neko-loc-camap.entrypoints=websecure"
+      - "traefik.http.routers.neko-loc-camap.tls=true"
+      - "traefik.http.routers.neko-loc-camap.middlewares=serviceheaders"
+      #- "traefik.http.routers.neko-loc-camap.tls.certresolver=le"
+      #- "traefik.http.routers.neko-loc-camap.tls.domains[0].main=localdomain"
+      #- "traefik.http.routers.neko-loc-camap.tls.domains[0].sans=*.localdomain"
+    volumes:
+      - ./camap-hx/lang:/srv/lang  # mount local lang instead, for template dev iterations.
+      - ./camap-hx/www:/srv/www  # mount local www instead, for statics and server dev iterations
+volumes:
+  database:
