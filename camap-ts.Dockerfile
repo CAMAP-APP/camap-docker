@@ -1,5 +1,15 @@
 FROM node:20.12.1-bullseye-slim as builder
 
+# Those variables are required to build neomodules (packages.front-core). 
+# Neomodules are built in an environment dependent way and will generate wrong redirect URL if the confiuration
+# doesn't match the content of the .env file
+# CAMAP_HOST, FRONT_URL, FRONT_GRAPHQL_URL must reference public hostname
+ENV FRONT_URL=https://api.camap.localdomain
+ENV FRONT_GRAPHQL_URL=${FRONT_URL}/graphql
+ENV CAMAP_HOST=https://camap.localdomain
+ENV MAPBOX_KEY=to_create_at_mapbox.com
+ENV THEME_ID=default
+
 RUN apt-get update && apt-get install -y \
     g++ \
     libconfig-tiny-perl \
