@@ -1,10 +1,4 @@
-FROM node:20.11.1-bullseye-slim as builder
-
-ENV FRONT_URL=https://api.camap.localdomain
-ENV FRONT_GRAPHQL_URL=${FRONT_URL}/graphql
-ENV CAMAP_HOST=https://camap.localdomain
-ENV MAPBOX_KEY=to_create_at_mapbox.com
-ENV THEME_ID=default
+FROM node:20.12.1-bullseye-slim as builder
 
 RUN apt-get update && apt-get install -y \
     g++ \
@@ -22,15 +16,24 @@ COPY --chown=interamap:interamap camap-ts/packages/ /srv/packages
 COPY --chown=interamap:interamap camap-ts/public/ /srv/public
 
 USER interamap
-RUN npm --fetch-retries 4 install && npm cache clean --force
-RUN npm rebuild node-sass --force --prefix packages/api-core
+# fetch retries to avoid network errors (timeout due to network latency)
+RUN npm install --fetch-retries 4 install && npm cache clean --force
+RUN npm rebuild node-sass --prefix packages/api-core
+
+# doesn't work on the staging/prod server, replaced by 2 lines below
+#RUN npm rebuild bcrypt --prefix packages/api-core
+WORKDIR /srv/packages/api-core/node_modules/bcrypt 
+RUN node-pre-gyp install --fallback-to-build
+
+WORKDIR /srv
+RUN npm rebuild sharp --prefix packages/api-core
 RUN npm run build
 ## remove packages of devDependencies
 RUN npm prune --production
 
 COPY --chown=interamap:interamap ./camap-ts/scripts/ /srv/scripts
 
-FROM  node:20.11.1-bullseye-slim
+FROM  node:20.12.1-bullseye-slim
 
 LABEL org.opencontainers.image.authors="InterAMAP44 inter@amap44.org"
 LABEL org.opencontainers.image.vendor="InterAMAP 44"
@@ -47,8 +50,9 @@ RUN apt-get update && apt-get install -y \
     virtual-mysql-client-core \
     procps \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
-ENV TZ="Europe/Paris"
+ENV TZ="Europe/Paris" 
 RUN echo "Europe/Paris" > /etc/timezone
 COPY --from=builder /srv/ /srv/
 COPY ./camap-ts/.env /srv/.env
+
 WORKDIR /srv

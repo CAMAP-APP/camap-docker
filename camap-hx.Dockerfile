@@ -1,4 +1,4 @@
-FROM node:20.11.1-bullseye-slim
+FROM node:20.12.1-bullseye-slim
 
 LABEL org.opencontainers.image.authors="InterAMAP44 inter@amap44.org"
 LABEL org.opencontainers.image.vendor="InterAMAP 44"
@@ -28,9 +28,8 @@ RUN sed -i 's/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf
 RUN sed -i 's!/var/www!/srv/www!' /etc/apache2/apache2.conf
 RUN sed -i 's!Options Indexes FollowSymLinks!Options FollowSymLinks!' /etc/apache2/apache2.conf
 RUN sed -i 's!/var/www/html!/srv/www!g' /etc/apache2/sites-available/000-default.conf
-#COPY camap-hx/apache.conf /etc/apache2/sites-available/camap.conf
-#RUN a2ensite camap
 
+# lib and version management for haxe
 RUN npm install -g lix
 
 RUN chown www-data:www-data /srv /var/www
@@ -38,6 +37,7 @@ RUN chown www-data:www-data /srv /var/www
 RUN haxelib setup /usr/share/haxelib
 RUN haxelib install templo
 RUN cd /usr/bin && haxelib run templo
+
 # WHY: src/App.hx:20: characters 58-84 : Cannot execute `git log -1 --format=%h`. fatal: not a git repository (or any of the parent directories): .git
 # TODO: remove
 COPY --chown=www-data:www-data ./camap-hx/.git /srv/.git
@@ -48,6 +48,9 @@ COPY --chown=www-data:www-data ./camap-hx/lang/ /srv/lang/
 COPY --chown=www-data:www-data ./camap-hx/src/ /srv/src/
 COPY --chown=www-data:www-data ./camap-hx/www/ /srv/www/
 
+# copy config reference for config generation from ENV variables (ie. in Scalingo)
+COPY ./camap-hx/config.xml config-raw.xml
+
 USER www-data
 
 WORKDIR /srv/www
@@ -55,14 +58,12 @@ RUN echo "User-agent: *" > robots.txt
 RUN echo "Disallow: /" >> robots.txt
 RUN echo "Allow: /group/" >> robots.txt
 
-COPY --chown=www-data:www-data ./camap-hx/backend/ /srv/backend/
 WORKDIR /srv/backend
 RUN lix scope create
 RUN lix install haxe 4.0.5
 RUN lix use haxe 4.0.5
 RUN lix download
 
-COPY --chown=www-data:www-data ./camap-hx/frontend/ /srv/frontend/
 WORKDIR /srv/frontend
 RUN lix scope create
 RUN lix use haxe 4.0.5
@@ -70,12 +71,11 @@ RUN lix download
 RUN npm install
 
 WORKDIR /srv
-COPY ./camap-hx/config.xml /srv/config.xml
 
 WORKDIR /srv/backend
 
 RUN haxe build.hxml -D i18n_generation;
-RUN mkdir ../lang/master/tmp
+RUN mkdir -p ../lang/master/tmp
 RUN chmod 777 ../lang/master/tmp
 RUN chown www-data.www-data ../www/file
 
@@ -88,8 +88,6 @@ RUN neko ../../../backend/temploc2.n -macros macros.mtt -output ../tmp/ *.mtt */
 WORKDIR /srv
 
 # holds connexion config
-COPY --chown=www-data:www-data ./camap-hx/scripts/ /srv/scripts/
-COPY ./camap-hx/config.xml config-raw.xml
 USER root
 RUN echo "Europe/Paris" > /etc/timezone
 CMD ["bash", "scripts/start.sh", "config-raw.xml", "config.xml" ]
