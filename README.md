@@ -74,13 +74,11 @@ Copier ensuite depuis camap/camap-docker/:
 
 - le répertoire ```ssl``` et son contenu dans ```camap```
 
-
-#### Modifier les lignes 3 à 7 de __camap-ts.Dockerfile__ dans Camap avec les valeurs indiquées dans __camap-ts/.env__
-
 Renseigner le DNS ou votre fichier hosts (c:\windows\system32\drivers\etc) avec les valeurs correspondante à la configuration.
+
 Pour une installation en local:
 
-```127.0.0.1 camap.localdomain api.camap.localdomain```
+```127.0.0.1 camap.localdomain api.camap.localdomain loc-mysql```
 
 ## Configuration
 
@@ -132,10 +130,22 @@ Pour automatiser la fourniture d'un certificat letsencrypt personnalisé:
 - décommenter les lignes ```traefik.http.routers.nest-loc-camap.tls``` de __docker-compose.yml__
 
 
+⚠️ Si vous voulez installer sur votre machine, arrêtez ici et continuez l'installation en suivant la documentation dans camap-ts/docs/install.md 
+
 ## Construction des containers
 
 exécuter ```docker compose up -d --build```
 
+
+## Import de données de test en local
+
+Si environnement de test existe, vous pouvez générer un dump pour avoir des données en local.
+
+L'import peut se faire directement depuis la commande MySQL ou depuis un client comme DBeaver.
+
+Si vous avez des problèmes d'import dû au format binaire des images (unknown command), vous pouvez supprimer les tables (mais pas la DB !) avant de lancer la restauration (si votre dump content les instructions `CREATE TABLE`)
+
+=> Attention, pour pouvoir supprimer les tables en local, il faut avant tout supprimer les références des tables entre elles.
 
 ## Accès à l'application
 
