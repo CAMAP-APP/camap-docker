@@ -38,18 +38,17 @@ RUN haxelib setup /usr/share/haxelib
 RUN haxelib install templo
 RUN cd /usr/bin && haxelib run templo
 
-# WHY: src/App.hx:20: characters 58-84 : Cannot execute `git log -1 --format=%h`. fatal: not a git repository (or any of the parent directories): .git
-# TODO: remove
-COPY --chown=www-data:www-data ./camap-hx/.git /srv/.git
 COPY --chown=www-data:www-data ./camap-hx/common/ /srv/common/
 COPY --chown=www-data:www-data ./camap-hx/data/ /srv/data/
 COPY --chown=www-data:www-data ./camap-hx/js/ /srv/js/
 COPY --chown=www-data:www-data ./camap-hx/lang/ /srv/lang/
 COPY --chown=www-data:www-data ./camap-hx/src/ /srv/src/
 COPY --chown=www-data:www-data ./camap-hx/www/ /srv/www/
+COPY --chown=www-data:www-data ./camap-hx/backend/ /srv/backend/
+COPY --chown=www-data:www-data ./camap-hx/frontend/ /srv/frontend/
 
-# copy config reference for config generation from ENV variables (ie. in Scalingo)
-COPY ./camap-hx/config.xml config-raw.xml
+# copy config reference
+COPY --chown=www-data:www-data ./camap-hx/config.xml /srv/config.xml
 
 USER www-data
 
@@ -90,4 +89,4 @@ WORKDIR /srv
 # holds connexion config
 USER root
 RUN echo "Europe/Paris" > /etc/timezone
-CMD ["bash", "scripts/start.sh", "config-raw.xml", "config.xml" ]
+ENTRYPOINT ["/usr/sbin/apache2ctl", "-D", "FOREGROUND"]
