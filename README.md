@@ -106,6 +106,20 @@ Cette clef est utilisée pour vérifier le hash des mots de passe des comptes Ca
 
 La rubrique _MAIL_ doit être renseignée avec les informations de votre serveur SMTP
 
+A des fins de test, vous pouvez créer un compte sur https://ethereal.email/create
+
+(avec un compte ethereal.email, laissez SMTP_SECURE=false et renseignez SMTP_AUTH_USER & SMTP_AUTH_PASS en fonction)
+
+```
+MAILER_TRANSPORT=smtp 
+SMTP_HOST=smtp.ethereal.email
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_AUTH_USER=
+SMTP_AUTH_PASS=
+```
+
+
 ### Configuration Certificat
 
 ___A VALIDER___
