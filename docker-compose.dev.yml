@@ -83,7 +83,7 @@ services:
       #- "traefik.http.routers.nest-loc-camap.tls.domains[0].sans=*.localdomain"
     volumes:
       - ./camap-ts/public/neostatic:/srv/public/neostatic # mount ts front-end build in folder on image for developpement iterations
-      - ./camap-ts/.env.docker:/srv/.env # mount env configured for container inner use, because we modify .env for localhost use.
+      - ./camap-ts/.env:/srv/.env # mount env configured for container inner use, because we modify .env for localhost use.
       - ./camap-ts/packages/api-core/src:/srv/packages/api-core/src # src to watch
 
   neko-loc-camap:

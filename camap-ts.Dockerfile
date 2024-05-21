@@ -1,11 +1,5 @@
 FROM node:20.12.1-bullseye-slim as builder
 
-ENV FRONT_URL=https://api.camap.localdomain
-ENV FRONT_GRAPHQL_URL=${FRONT_URL}/graphql
-ENV CAMAP_HOST=https://camap.localdomain
-ENV MAPBOX_KEY=to_create_at_mapbox.com
-ENV THEME_ID=default
-
 RUN apt-get update && apt-get install -y \
     g++ \
     libconfig-tiny-perl \
@@ -21,9 +15,17 @@ COPY --chown=interamap:interamap camap-ts/orm*.js camap-ts/package.json camap-ts
 COPY --chown=interamap:interamap camap-ts/packages/ /srv/packages
 COPY --chown=interamap:interamap camap-ts/public/ /srv/public
 
+# use .env configuration for builder
+COPY --chown=interamap:interamap camap-ts/.env /srv/.env
+RUN bash -c "source /srv/.env && export"
+
 USER interamap
-RUN npm --fetch-retries 4 install && npm cache clean --force
-RUN npm rebuild node-sass --force --prefix packages/api-core
+# fetch retries to avoid network errors (timeout due to network latency)
+RUN npm install --fetch-retries 4 && npm cache clean --force
+RUN npm rebuild node-sass --prefix packages/api-core
+RUN npm rebuild bcrypt --prefix packages/api-core
+RUN npm rebuild sharp --prefix packages/api-core
+
 RUN npm run build
 ## remove packages of devDependencies
 RUN npm prune --production
