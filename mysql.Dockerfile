@@ -8,6 +8,6 @@ LABEL description="Camap mysql container"
 LABEL org.opencontainers.image.title="mysql"
 LABEL org.opencontainers.image.description="Container 3/3 de l'application Camap (mysql)"
 
-COPY ./camap-ts/docker-compose/mysql/my.cnf /etc/mysql/conf.d/
+COPY ./camap-ts/mysql/my.cnf /etc/mysql/conf.d/
 ENV TZ="Europe/Paris" 
 RUN echo "Europe/Paris" > /etc/timezone
