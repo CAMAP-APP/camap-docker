@@ -69,8 +69,6 @@ RUN lix use haxe 4.0.5
 RUN lix download
 RUN npm install
 
-WORKDIR /srv
-
 WORKDIR /srv/backend
 
 RUN haxe build.hxml -D i18n_generation;
