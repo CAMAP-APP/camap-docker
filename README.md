@@ -39,10 +39,6 @@ Pour une installation en local:
 
 ```127.0.0.1 camap.localdomain api.camap.localdomain```
 
-#### Modifier les lignes 3 à 7 de __camap-ts.Dockerfile__ dans $DESTDIR avec les valeurs indiquées dans __camap-ts/.env__
-
-
-
 ## Installation sous Windows
 
 Installer docker desktop
