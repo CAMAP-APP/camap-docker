@@ -162,6 +162,10 @@ Pour une installation en local avec les valeurs par défaut:
 
 	127.0.0.1 camap.localdomain api.camap.localdomain loc-mysql
 
+### Traefik
+
+Si vous modifiez les noms d'hôtes par défaut, pensez à éditer le fichier docker-compose.yml en conséquence en remplaçant toutes les occurences de camap.localdomain et api.camap.localdomain.
+
 ## Configuration
 
 ### La configuration du container neko-loc-camap se fait dans _config.xml_ du sous-répertoire camap-hx
