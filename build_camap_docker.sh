@@ -18,7 +18,7 @@ then
         $res2=$?
         if [ $res2 -ne 0 ] 
         then
-                echo "Impossible de créer le répertoide d'installation"
+                echo "Impossible de créer le répertoire d'installation"
                 exit 1
         else
                 echo "Création de "$DESTDIR" OK"

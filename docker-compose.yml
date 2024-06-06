@@ -13,7 +13,7 @@ services:
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
       - "--entrypoints.nest.adress=:3010"
-   
+
     ports:
       - "80:80"
       - "443:443"
@@ -24,14 +24,14 @@ services:
     volumes:
       # So that Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./traefik.yml:/traefik.yml 
+      - ./traefik.yml:/traefik.yml
       - ./traefik/config:/etc/traefik/config
       - ./logs:/var/log/traefik
       - ./ssl:/etc/traefik/config/ssl
- 
+
     labels:
       # CROS error
-      - "traefik.http.middlewares.serviceheaders.headers.accesscontrolalloworiginlist=https://camap.localdomain,https://api.camap.localdomain" 
+      - "traefik.http.middlewares.serviceheaders.headers.accesscontrolalloworiginlist=https://camap.localdomain,https://api.camap.localdomain"
       - "traefik.http.middlewares.serviceheaders.headers.accesscontrolallowmethods=PUT,GET,POST,HEAD,PATCH,DELETE,OPTION"
       - "traefik.http.middlewares.serviceheaders.headers.accesscontrolallowcredentials=true"
       - "traefik.http.middlewares.serviceheaders.headers.accesscontrolallowheaders=x-cavea-url,authorization,x-requested-with,accept-api-version,content-type,cookie"
@@ -53,6 +53,7 @@ services:
       - 3306
     volumes:
       - database:/var/lib/mysql
+      # if you want easily get dumps from container
 #     - ./mysql/dumps/:/root/dumps
     labels:
       - "traefik.enable=false"
@@ -62,14 +63,14 @@ services:
       - loc-mysql
     container_name: nest-loc-camap
     build:
-        context: .
-        dockerfile: camap-ts.Dockerfile
+      context: .
+      dockerfile: camap-ts.Dockerfile
     env_file: camap-ts/.env
     expose:
-      - 6007
       - 3010
+      - 6007
     working_dir: /srv/packages/api-core
-    command: npm run start:prod
+    command: npm run start:prod # start:dev for dev env (cf docker-compose.dev.yml)
     labels:
       - "traefik.http.routers.nest-loc-camap.rule=Host(`api.camap.localdomain`)"
       - "traefik.http.services.nest-loc-camap.loadbalancer.server.port=3010"
@@ -79,12 +80,11 @@ services:
       #- "traefik.http.routers.nest-loc-camap.tls.certresolver=le"
       #- "traefik.http.routers.nest-loc-camap.tls.domains[0].main=localdomain"
       #- "traefik.http.routers.nest-loc-camap.tls.domains[0].sans=*.localdomain"
-      
 
   neko-loc-camap:
     build:
-        context: .
-        dockerfile: camap-hx.Dockerfile
+      context: .
+      dockerfile: camap-hx.Dockerfile
     container_name: neko-loc-camap
     expose:
       - 80
@@ -99,6 +99,6 @@ services:
       - "traefik.http.routers.neko-loc-camap.middlewares=serviceheaders"
       #- "traefik.http.routers.neko-loc-camap.tls.certresolver=le"
       #- "traefik.http.routers.neko-loc-camap.tls.domains[0].main=localdomain"
-      #- "traefik.http.routers.neko-loc-camap.tls.domains[0].sans=*.localdomain"      
+      #- "traefik.http.routers.neko-loc-camap.tls.domains[0].sans=*.localdomain"
 volumes:
   database:
