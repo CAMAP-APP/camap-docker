@@ -39,7 +39,7 @@ services:
   
   loc-mysql:
     # latest release of mysql for camap
-    image: ghcr.io/camap-app/camap-ts/mysql:master
+    image: ghcr.io/camap-app/mysql:master
     environment:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=db-camap
@@ -62,13 +62,13 @@ services:
       - loc-mysql
     container_name: nest-loc-camap
     # latest release of camap-ts 
-    image: ghcr.io/camap-app/camap-ts/camap-ts:master
+    image: ghcr.io/camap-app/camap-ts:master
     env_file: .env
     expose:
       - 3010
       - 6007
     working_dir: /srv/packages/api-core
-    command: npm run start:prod # start:dev for dev env (cf docker-compose.dev.yml)
+    command: npm run start:dev
     labels:
       - "traefik.http.routers.nest-loc-camap.rule=Host(`api.camap.localdomain`)"
       - "traefik.http.services.nest-loc-camap.loadbalancer.server.port=3010"
@@ -81,7 +81,7 @@ services:
 
   neko-loc-camap:
     # latest release of camap-hx
-    image: ghcr.io/camap-app/camap-hx/camap-hx:master
+    image: ghcr.io/camap-app/camap-hx:master
     container_name: neko-loc-camap
     expose:
       - 80

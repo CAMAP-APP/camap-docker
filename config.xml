@@ -19,6 +19,6 @@
 	camap_api="https://api.camap.localdomain"
 	camap_bridge_api="http://nest-loc-camap:3010"
 	
-	mapbox_server_token="to_create_at_mapbox.com"
+	mapbox_server_token="pk.eyJ1IjoiZGVsdGEtc3R1ZHVlbnQiLCJhIjoiY2xvMDk0MTVhMTJ3ZDJrcGR5ZDFkaHl4ciJ9.Gj2VU1wvxc7rFVt5E4KLOQ"
 	/>
 	
