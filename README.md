@@ -96,7 +96,19 @@ Ensuite un premier accès à https://camap.localdomain/install est nécessaire p
 
 Ce compte admin est créé avec l'adresse 'admin@camap.tld' et le mot de passe 'admin'
 
-Vous pouvez maintenant tester Camap !
+### Quelques commandes docker-compose de base 
+Pour arrêter Camap: 	
+```docker compose down```
+
+Pour lancer Camap: 
+```docker compose up```
+
+Pour voir les logs: 
+```docker compose logs```
+
+Pour voir les logs en continu: 
+```docker compose logs -f```
+
 
 # Option 2: Installation avancée configurable
 
