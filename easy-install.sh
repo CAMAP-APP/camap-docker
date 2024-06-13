@@ -17,4 +17,4 @@ mv docker-compose.yml docker-compose.orig.yml
 mv docker-compose.easy.yml docker-compose.yml
 
 # Lancer docker-compose en mode détaché
-docker-compose up -d
+docker compose up -d
