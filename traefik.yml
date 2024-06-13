@@ -36,7 +36,7 @@ providers:
 #certificatesResolvers:
 #  le:
 #    acme:
-#      email: admin@camap.localdomain
+#      email: admin@camap.tld
 #      storage: /etc/traefik/ssl/acme.json
 #      httpChallenge:
 #        # used during the challenge
