@@ -29,6 +29,13 @@ services:
       - ./logs:/var/log/traefik
       - ./ssl:/etc/traefik/config/ssl
 
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"
+        compress: "true"
+
     labels:
       # CROS error
       - "traefik.http.middlewares.serviceheaders.headers.accesscontrolalloworiginlist=https://camap.localdomain,https://api.camap.localdomain"
@@ -55,6 +62,14 @@ services:
       - database:/var/lib/mysql
       # if you want easily get dumps from container
 #     - ./mysql/dumps/:/root/dumps
+    
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"
+        compress: "true"
+    
     labels:
       - "traefik.enable=false"
 
@@ -71,6 +86,15 @@ services:
       - 6007
     working_dir: /srv/packages/api-core
     command: npm run start:prod # start:dev for dev env (cf docker-compose.dev.yml)
+
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"
+        compress: "true"
+
+
     labels:
       - "traefik.http.routers.nest-loc-camap.rule=Host(`api.camap.localdomain`)"
       - "traefik.http.services.nest-loc-camap.loadbalancer.server.port=3010"
@@ -91,6 +115,14 @@ services:
     depends_on:
       - loc-mysql
       - nest-loc-camap
+
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"
+        compress: "true"
+
     labels:
       - "traefik.http.routers.neko-loc-camap.rule=Host(`camap.localdomain`)"
       - "traefik.http.services.neko-loc-camap.loadbalancer.server.port=80"
