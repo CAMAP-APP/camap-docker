@@ -1,0 +1,6 @@
+[submodule "camap-hx"]
+	path = camap-hx
+	url = https://github.com/CAMAP-APP/camap-hx.git
+[submodule "camap-ts"]
+	path = camap-ts
+	url = https://github.com/CAMAP-APP/camap-ts.git

@@ -33,12 +33,8 @@ else
 fi
 
 cd $DESTDIR
-echo "Installation des sources de camap-hx"
-git clone https://github.com/CAMAP-APP/camap-hx.git
-[ $? -ne 0 ] && echo "Erreur d'installation -1" && exit -1
-
-echo "Installation des sources de camap-ts"
-git clone https://github.com/CAMAP-APP/camap-ts.git
+echo "Installation des depots camap-hx et camap-ts en sous-modules"
+git submodule update --init --recursive
 [ $? -ne 0 ] && echo "Erreur d'installation -2" && exit -2
 
 echo "Copie des fichiers de configuration"

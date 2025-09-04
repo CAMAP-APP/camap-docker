@@ -9,7 +9,8 @@ Camap-docker peut:
 - vous aider à configurer, compiler et installer une version de dev sur votre poste
 - ou vous inspirer pour installer une version de production.
 
-La présente documentation a été testée sur Debian 11 & Windows 11. Tout retour est bienvenue.
+La présente documentation a été testée sur Debian 11 & Windows 11 et MacOS 15.6 (Apple Silicon).
+Tout retour est bienvenue.
 
 ## Prérequis
 
@@ -115,52 +116,35 @@ Pour voir les logs en continu:
 ## Installation Linux Debian
 
 lancer
-`build_camap_docker.sh <DESTDIR>`
+```build_camap_docker.sh <DESTDIR>```
 
-pour une installation de Camap dans ```DESTDIR```
+pour une installation de Camap dans `DESTDIR`
 
 Renseigner le DNS ou votre fichier hosts avec les valeurs correspondantes à la configuration.
 
 Pour une installation en local avec les valeurs par défaut:
-
+```
 	127.0.0.1 camap.localdomain api.camap.localdomain
+```
 
 ## Installation sous Windows
 
 Installer docker desktop
 
-Créer un répertoire Camap
+Cloner ce repo
+puis lancer
+- ```git submodule update --init --recursive```
 
-Dans ce répertoire:
-
-- ```git clone https://github.com/CAMAP-APP/camap-hx.git```
-
-- ```git clone https://github.com/CAMAP-APP/camap-ts.git```
-
-- ```git clone https://github.com/CAMAP-APP/camap-docker.git```
-
-
-Copier ensuite depuis camap/camap-docker/:
-
-- ```traefik.yml``` dans ```camap```
-
-- ```*.Dockerfile``` dans ```camap```
-
-- ```docker-compose.yml``` dans ```camap```
-
-- ```.env``` dans ```camap/camap-ts```
-
-- ```config.xml``` dans ```camap/camap-hx```
-
-- le répertoire ```traefik``` et son contenu dans ```camap```
-
-- le répertoire ```ssl``` et son contenu dans ```camap```
+Copier les configurations suivantes:
+- `.env` dans `camap-ts`
+- `config.xml` dans `camap-hx`
 
 Renseigner le DNS ou votre fichier hosts (c:\windows\system32\drivers\etc) avec les valeurs correspondante à la configuration.
 
 Pour une installation en local avec les valeurs par défaut:
-
+```
 	127.0.0.1 camap.localdomain api.camap.localdomain loc-mysql
+```
 
 ### Traefik
 
@@ -196,12 +180,12 @@ _Cette clef est utilisée pour vérifier le hash des mots de passe des comptes C
 
 La rubrique _MAIL_ doit être renseignée avec les informations de votre serveur SMTP
 
-A des fins de test, vous pouvez créer un compte sur https://ethereal.email/create
+A des fins de test, vous pouvez créer un compte sur [https://ethereal.email/create]
 
 (avec un compte ethereal.email, laissez SMTP_SECURE=false et renseignez SMTP_AUTH_USER & SMTP_AUTH_PASS en fonction)
 
 ```
-MAILER_TRANSPORT=smtp 
+MAILER_TRANSPORT=smtp
 SMTP_HOST=smtp.ethereal.email
 SMTP_PORT=587
 SMTP_SECURE=false

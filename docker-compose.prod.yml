@@ -27,6 +27,13 @@ services:
       - ./logs:/var/log/traefik
       - ./ssl:/etc/traefik/config/ssl
 
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"
+        compress: "true"
+
     labels:
       # CROS error
       - "traefik.http.middlewares.serviceheaders.headers.accesscontrolalloworiginlist=https://camap.localdomain,https://api.camap.localdomain"
@@ -36,11 +43,6 @@ services:
       - "traefik.http.middlewares.serviceheaders.headers.accesscontrolmaxage=100"
       - "traefik.http.middlewares.serviceheaders.headers.addvaryheader=true"
       - "traefik.http.routers.service.middlewares=serviceheaders"
-    
-    networks:
-      default:
-        aliases:
-          - camap.localdomain
   
   loc-mysql:
     build:
@@ -52,13 +54,20 @@ services:
       - MYSQL_USER=docker
       - MYSQL_PASSWORD=docker
     container_name: loc-mysql
-    ports:
-      - "3306:3306"
     expose:
       - 3306
     volumes:
       - database:/var/lib/mysql
-    #     - ./mysql/dumps/:/root/dumps
+      # if you want easily get dumps from container
+#     - ./mysql/dumps/:/root/dumps
+    
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"
+        compress: "true"
+    
     labels:
       - "traefik.enable=false"
 
@@ -74,7 +83,16 @@ services:
       - 3010
       - 6007
     working_dir: /srv/packages/api-core
-    command: npm run start:dev
+    command: npm run start:prod # start:dev for dev env (cf docker-compose.dev.yml)
+
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"
+        compress: "true"
+
+
     labels:
       - "traefik.http.routers.nest-loc-camap.rule=Host(`api.camap.localdomain`)"
       - "traefik.http.services.nest-loc-camap.loadbalancer.server.port=3010"
@@ -84,13 +102,8 @@ services:
       #- "traefik.http.routers.nest-loc-camap.tls.certresolver=le"
       #- "traefik.http.routers.nest-loc-camap.tls.domains[0].main=localdomain"
       #- "traefik.http.routers.nest-loc-camap.tls.domains[0].sans=*.localdomain"
-    volumes:
-      - ./camap-ts/public/neostatic:/srv/public/neostatic # mount ts front-end build in folder on image for developpement iterations
-      - ./camap-ts/.env:/srv/.env # mount env configured for container inner use, because we modify .env for localhost use.
-      - ./camap-ts/packages/api-core/src:/srv/packages/api-core/src # src to watch
 
   neko-loc-camap:
-    platform: linux/amd64
     build:
       context: .
       dockerfile: camap-hx.Dockerfile
@@ -100,6 +113,14 @@ services:
     depends_on:
       - loc-mysql
       - nest-loc-camap
+
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"
+        compress: "true"
+
     labels:
       - "traefik.http.routers.neko-loc-camap.rule=Host(`camap.localdomain`)"
       - "traefik.http.services.neko-loc-camap.loadbalancer.server.port=80"
@@ -109,8 +130,5 @@ services:
       #- "traefik.http.routers.neko-loc-camap.tls.certresolver=le"
       #- "traefik.http.routers.neko-loc-camap.tls.domains[0].main=localdomain"
       #- "traefik.http.routers.neko-loc-camap.tls.domains[0].sans=*.localdomain"
-    volumes:
-      - ./camap-hx/lang:/srv/lang  # mount local lang instead, for template dev iterations.
-      - ./camap-hx/www:/srv/www  # mount local www instead, for statics and server dev iterations
 volumes:
   database:
