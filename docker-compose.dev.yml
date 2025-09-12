@@ -63,6 +63,7 @@ services:
       - "traefik.enable=false"
 
   nest-loc-camap:
+    platform: linux/amd64
     depends_on:
       - loc-mysql
     container_name: nest-loc-camap
@@ -88,6 +89,7 @@ services:
       - ./camap-ts/public/neostatic:/srv/public/neostatic # mount ts front-end build in folder on image for developpement iterations
       - ./camap-ts/.env:/srv/.env # mount env configured for container inner use, because we modify .env for localhost use.
       - ./camap-ts/packages/api-core/src:/srv/packages/api-core/src # src to watch
+      - ./camap-ts/packages/api-core/package.json:/srv/packages/api-core/package.json
 
   neko-loc-camap:
     platform: linux/amd64
