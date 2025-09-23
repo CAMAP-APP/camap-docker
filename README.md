@@ -178,20 +178,23 @@ _Cette clef est utilisée pour vérifier le hash des mots de passe des comptes C
 
 - ```MAPBOX_KEY``` contient la clef pour les fonctions de géolocalisation, à créer sur mapbox.com (gratuit jusqu'à 100.000 requetes par mois)
 
-La rubrique _MAIL_ doit être renseignée avec les informations de votre serveur SMTP
+La rubrique _MAIL_ doit être renseignée avec les informations de votre serveur SMTP.
 
-A des fins de test, vous pouvez créer un compte sur [https://ethereal.email/create]
+En développement, nous recommandons d'utiliser Mailpit, déjà inclus dans `docker-compose.dev.yml`.
 
-(avec un compte ethereal.email, laissez SMTP_SECURE=false et renseignez SMTP_AUTH_USER & SMTP_AUTH_PASS en fonction)
+1. Lancer Mailpit (automatique avec `docker compose up` en dev). Interface: http://localhost:8025
+2. Dans `camap-ts/.env`, configurer:
 
 ```
 MAILER_TRANSPORT=smtp
-SMTP_HOST=smtp.ethereal.email
-SMTP_PORT=587
+SMTP_HOST=mailpit
+SMTP_PORT=1025
 SMTP_SECURE=false
 SMTP_AUTH_USER=
 SMTP_AUTH_PASS=
 ```
+
+Avec ces valeurs, les emails seront capturés par Mailpit et visibles dans l'interface web.
 
 
 ### Configuration Certificat

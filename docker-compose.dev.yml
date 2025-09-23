@@ -114,5 +114,19 @@ services:
     volumes:
       - ./camap-hx/lang:/srv/lang  # mount local lang instead, for template dev iterations.
       - ./camap-hx/www:/srv/www  # mount local www instead, for statics and server dev iterations
+      - ./camap-hx/config.xml:/srv/config.xml
+  
+  mailpit:
+    image: axllent/mailpit
+    container_name: mailpit
+    ports:
+      - "1025:1025" # SMTP
+      - "8025:8025" # Web UI
+    environment:
+      - MP_SMTP_AUTH=mail_user:mail_pass
+      - MP_SMTP_AUTH_ALLOW_INSECURE=true
+    labels:
+      - "traefik.enable=false"
+
 volumes:
   database:
