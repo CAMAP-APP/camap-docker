@@ -6,11 +6,19 @@
 		},
 		{
 			"name": "[HX] Backend",
-			"path": "camap-hx/backend"
+			"path": "camap-hx/src"
 		},
 		{
-			"name": "[HX] frontend",
-			"path": "camap-hx/frontend"
+			"name": "[HX] Templates",
+			"path": "camap-hx/lang/master/tpl"
+		},
+		{
+			"name": "[HX] Common",
+			"path": "camap-hx/common"
+		},
+		{
+			"name": "[HX] Frontend",
+			"path": "camap-hx/js",
 		},
 		{
 			"name": "[TS] api-core",
@@ -23,6 +31,10 @@
 		{
 			"name": "[TS] front-core",
 			"path": "camap-ts/packages/front-core"
+		},
+		{
+			"name": "[DOCS]",
+			"path": "camap-ts/docs"
 		}
 	],
 	"settings": {
