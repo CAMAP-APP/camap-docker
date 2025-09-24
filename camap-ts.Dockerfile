@@ -1,4 +1,4 @@
-FROM node:20.12.1-bullseye-slim as builder
+FROM node:20.12.1 AS builder
 
 RUN apt-get update && apt-get install -y \
     g++ \
@@ -22,7 +22,6 @@ RUN bash -c "source /srv/.env && export"
 USER interamap
 # fetch retries to avoid network errors (timeout due to network latency)
 RUN npm install --fetch-retries 4 && npm cache clean --force
-RUN npm rebuild node-sass --prefix packages/api-core
 RUN npm rebuild bcrypt --prefix packages/api-core
 RUN npm rebuild sharp --prefix packages/api-core
 
@@ -32,7 +31,7 @@ RUN npm prune --production
 
 COPY --chown=interamap:interamap ./camap-ts/scripts/ /srv/scripts
 
-FROM  node:20.12.1-bullseye-slim
+FROM  node:20.12.1
 
 LABEL org.opencontainers.image.authors="InterAMAP44 inter@amap44.org"
 LABEL org.opencontainers.image.vendor="InterAMAP 44"

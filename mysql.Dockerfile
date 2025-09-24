@@ -1,4 +1,4 @@
-FROM mysql:8.0.36-debian
+FROM mysql:8.0.36
 
 LABEL org.opencontainers.image.authors="InterAMAP44 inter@amap44.org"
 LABEL org.opencontainers.image.vendor="InterAMAP 44"
