@@ -40,17 +40,20 @@
 	"settings": {
 		"typescript.tsdk": "camap-ts/node_modules/typescript/lib",
 		"i18n-ally.localesPaths": [
-			"camap-hx/lang",
-			"camap-hx/www/lang",
+			// "camap-hx/lang",
+			// "camap-hx/www/lang",
 			"camap-ts/public/locales",
-			"camap-hx/lang/master/tpl/messages",
-			"camap-hx/lang/fr/tpl/messages",
-			"camap-hx/www/js/tinymce/langs",
-			"camap-ts/packages/api-core/src/messages",
-			"camap-ts/public/locales/fr/messages",
-			"camap-ts/packages/front-core/src/modules/messages",
-			"camap-hx/www/js/tinymce/plugins/help/js/i18n"
+			// "camap-hx/lang/master/tpl/messages",
+			// "camap-hx/lang/fr/tpl/messages",
+			// "camap-hx/www/js/tinymce/langs",
+			// "camap-ts/packages/api-core/src/messages",
+			// "camap-ts/public/locales/fr/messages",
+			// "camap-ts/packages/front-core/src/modules/messages",
+			// "camap-hx/www/js/tinymce/plugins/help/js/i18n"
 		],
+		"i18n-ally.pathMatcher": "{locale}/{namespace}.json",
+		"i18n-ally.sourceLanguage": "fr",
+		"i18n-ally.displayLanguage": "fr",
 		"haxe.configurations": [
 			["camap-hx/backend/build.hxml"],
 			["camap-hx/frontend/build.hxml"],

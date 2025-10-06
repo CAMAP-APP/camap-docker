@@ -1,4 +1,4 @@
-FROM node:20.12.1
+FROM node:20.18.3
 
 LABEL org.opencontainers.image.authors="InterAMAP44 inter@amap44.org"
 LABEL org.opencontainers.image.vendor="InterAMAP 44"

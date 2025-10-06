@@ -1,4 +1,4 @@
-FROM node:20.12.1 AS builder
+FROM node:20.18.3 AS builder
 
 RUN apt-get update && apt-get install -y \
     g++ \
@@ -31,7 +31,7 @@ RUN npm prune --production
 
 COPY --chown=interamap:interamap ./camap-ts/scripts/ /srv/scripts
 
-FROM  node:20.12.1
+FROM  node:20.18.3
 
 LABEL org.opencontainers.image.authors="InterAMAP44 inter@amap44.org"
 LABEL org.opencontainers.image.vendor="InterAMAP 44"
