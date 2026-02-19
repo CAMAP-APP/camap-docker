@@ -1,16 +1,23 @@
 services:
-  
+
   reverse-proxy:
     # The official v3 Traefik docker image
-    image: traefik:beaufort
+    image: traefik:v3.6.8
     # Enables the web UI and tells Traefik to listen to docker
+    environment:
+      # Docker Engine 29.x enforces MinAPIVersion=1.44. Without this, some clients
+      # may hit the daemon with an older API version and get a confusing empty
+      # "Error response from daemon:" error.
+      - DOCKER_API_VERSION=1.44
     command:
+      - "--log.level=debug"
       - "--api.insecure=true"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
+      - "--providers.docker.endpoint=unix:///var/run/docker.sock"
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
-      - "--entrypoints.nest.adress=:3010"
+      - "--entrypoints.nest.address=:3010"
 
     ports:
       - "80:80"
@@ -18,7 +25,7 @@ services:
       - "3010:3010"
       # The Web UI (enabled by --api.insecure=true)
       - "8080:8080"
-    
+
     volumes:
       # So that Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock
@@ -36,12 +43,12 @@ services:
       - "traefik.http.middlewares.serviceheaders.headers.accesscontrolmaxage=100"
       - "traefik.http.middlewares.serviceheaders.headers.addvaryheader=true"
       - "traefik.http.routers.service.middlewares=serviceheaders"
-    
+
     networks:
       default:
         aliases:
           - camap.localdomain
-  
+
   loc-mysql:
     build:
       context: .
@@ -67,10 +74,20 @@ services:
     depends_on:
       - loc-mysql
     container_name: nest-loc-camap
+    user: root
     build:
-      context: .
+      context: ./camap-ts
       dockerfile: camap-ts.Dockerfile
-    env_file: camap-ts/.env
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=1
+      - WATCHPACK_POLLING=true
+      # Make the sample env work out-of-the-box with dev mail
+      - SMTP_HOST=mailpit
+      - SMTP_PORT=1025
+      - SMTP_SECURE=false
     expose:
       - 3010
       - 6007
@@ -87,14 +104,18 @@ services:
       #- "traefik.http.routers.nest-loc-camap.tls.domains[0].sans=*.localdomain"
     volumes:
       - ./camap-ts/public/neostatic:/srv/public/neostatic # mount ts front-end build in folder on image for developpement iterations
-      - ./camap-ts/.env:/srv/.env # mount env configured for container inner use, because we modify .env for localhost use.
+      - ./.env:/srv/.env # mount env configured for container inner use, because we modify .env for localhost use.
       - ./camap-ts/packages/api-core/src:/srv/packages/api-core/src # src to watch
       - ./camap-ts/packages/api-core/package.json:/srv/packages/api-core/package.json
+    networks:
+      default:
+        aliases:
+          - nest-devcamap
 
   neko-loc-camap:
     platform: linux/amd64
     build:
-      context: .
+      context: ./camap-hx
       dockerfile: camap-hx.Dockerfile
     container_name: neko-loc-camap
     expose:
@@ -112,10 +133,10 @@ services:
       #- "traefik.http.routers.neko-loc-camap.tls.domains[0].main=localdomain"
       #- "traefik.http.routers.neko-loc-camap.tls.domains[0].sans=*.localdomain"
     volumes:
-      - ./camap-hx/lang:/srv/lang  # mount local lang instead, for template dev iterations.
-      - ./camap-hx/www:/srv/www  # mount local www instead, for statics and server dev iterations
-      - ./camap-hx/config.xml:/srv/config.xml
-  
+      - ./camap-hx/lang:/srv/lang # mount local lang instead, for template dev iterations.
+      - ./camap-hx/www:/srv/www # mount local www instead, for statics and server dev iterations
+      - ./camap-hx/config.xml.dist:/srv/config.xml:ro
+
   mailpit:
     image: axllent/mailpit
     container_name: mailpit
