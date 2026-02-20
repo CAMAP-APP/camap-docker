@@ -1,0 +1,9 @@
+{
+    "haxe.executable": {
+        "path": "auto",
+        "env": {
+            
+        }
+    },
+    "haxelib.executable": "auto"
+}

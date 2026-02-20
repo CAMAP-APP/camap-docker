@@ -52,8 +52,59 @@
 			"camap-hx/www/js/tinymce/plugins/help/js/i18n"
 		],
 		"haxe.configurations": [
-			["camap-hx/backend/build.hxml"],
-			["camap-hx/frontend/build.hxml"],
+			[
+				"camap-hx/backend/build.hxml"
+			],
+			[
+				"camap-hx/frontend/build.hxml"
+			],
+		],
+		"search.exclude": {
+			"**/node_modules": true,
+			"**/bower_components": true,
+			"**/*.code-search": true,
+			"**/dist": true,
+			"**/package-lock.json": true,
+			"camap-hx/www": true
+		}
+	},
+	"tasks": {
+		"version": "2.0.0",
+		"tasks": [
+			{
+				"label": "[TS] build:api",
+				"command": "cd ${workspaceFolder}/camap-ts/packages/api-core && npm run start:dev",
+				"type": "shell",
+				"args": [],
+				"runOptions": {
+					"runOn": "folderOpen",
+				},
+				"problemMatcher": [
+					"$tsc"
+				],
+				"presentation": {
+					"reveal": "always",
+					"group": "build"
+				},
+				"group": "build"
+			},
+			{
+				"label": "[TS] build:front",
+				"command": "cd ${workspaceFolder}/camap-ts/packages/front-core && npm run watch",
+				"type": "shell",
+				"args": [],
+				"runOptions": {
+					"runOn": "folderOpen",
+				},
+				"problemMatcher": [
+					"$tsc"
+				],
+				"presentation": {
+					"reveal": "always",
+					"group": "build"
+				},
+				"group": "build"
+			}
 		]
 	}
 }

@@ -135,7 +135,8 @@ services:
     volumes:
       - ./camap-hx/lang:/srv/lang # mount local lang instead, for template dev iterations.
       - ./camap-hx/www:/srv/www # mount local www instead, for statics and server dev iterations
-      - ./camap-hx/config.xml.dist:/srv/config.xml:ro
+      - ./camap-hx/config.xml:/srv/config.xml:ro
+      - .env:/srv/camapts.env:ro
 
   mailpit:
     image: axllent/mailpit
