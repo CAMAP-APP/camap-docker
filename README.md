@@ -1,9 +1,10 @@
 # camap-docker
 
-> **Ce dépot n'est plus maintenu.**
+> ## Ce dépot n'est plus maintenu.
 >
 > Camap a migré sur kubernetes, aussi il est recommandé d'utiliser une installation 
 > locale sur minikube
+>
 > Une installation clé en main est disponible sur [CAMAP-APP/minikube-camap](https://github.com/CAMAP-APP/minikube-camap)
 
 ---
