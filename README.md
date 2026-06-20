@@ -1,5 +1,13 @@
 # camap-docker
 
+> **Ce dépot n'est plus maintenu.**
+>
+> Camap a migré sur kubernetes, aussi il est recommandé d'utiliser une installation 
+> locale sur minikube
+> Une installation clé en main est disponible sur [CAMAP-APP/minikube-camap](https://github.com/CAMAP-APP/minikube-camap)
+
+---
+
 Le package [**camap-docker**](https://github.com/CAMAP-APP/camap-docker) permet une installation simplifiée de Camap pour un environnement de développement.
 Il utilise les sources [**camap-hx**](https://github.com/CAMAP-APP/camap-hx) et [**camap-ts**](https://github.com/CAMAP-APP/camap-ts)
 des dernières versions publiées sur [CAMAP-APP](https://github.com/CAMAP-APP/camap-docker.git)
